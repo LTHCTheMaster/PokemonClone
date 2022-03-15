@@ -38,7 +38,7 @@ class PokeType:
         return False
 
     def __str__(self) -> str:
-        return f"{self.name}:\n\tWEAKNESS: {','.join([i.name for i in self.weakness_t])}\n\tRESISTANCE: {','.join([i.name for i in self.resistance_t])}\n\tIMMUNE: {','.join([i.name for i in self.immune_t])}"
+        return f"{self.name}:\n\tWEAKNESS: {', '.join([i.name for i in self.weakness_t])}\n\tRESISTANCE: {', '.join([i.name for i in self.resistance_t])}\n\tIMMUNE: {', '.join([i.name for i in self.immune_t])}"
 
 class Move:
     def __init__(self, name: str, typed: PokeType, basePower: int, accuracy: int):
@@ -57,6 +57,11 @@ class Pokemon:
         else:
             self.type1 = "UNDEFINED"
     
+    def __str__(self) -> str:
+        bst_parts = '\n\t\t'.join([str(i) for i in self.bst])
+        types_part = self.type0.name if type(self.type1) is str else self.type0.name + ', ' + self.type1.name
+        return f"{self.name}:\n\tBase Stats:\n\t\t{bst_parts}\n\tTypes: {types_part}"
+
     def getMultiplier(self, move: Move) -> Fraction:
         multiplier = normal
         if self.type0.isWeakTo(move.typed):

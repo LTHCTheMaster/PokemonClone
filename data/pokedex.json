@@ -1,0 +1,119 @@
+{
+    "Charmander": {
+        "bst": [
+            39,
+            52,
+            60,
+            43,
+            50,
+            65
+        ],
+        "types": [
+            "fire"
+        ]
+    },
+    "Charmeleon": {
+        "bst": [
+            58,
+            64,
+            80,
+            58,
+            65,
+            80
+        ],
+        "types": [
+            "fire"
+        ]
+    },
+    "Charizard": {
+        "bst": [
+            78,
+            84,
+            109,
+            78,
+            85,
+            100
+        ],
+        "types": [
+            "fire", "flying"
+        ]
+    },
+    "Squirtle": {
+        "bst": [
+            44,
+            48,
+            50,
+            65,
+            64,
+            43
+        ],
+        "types": [
+            "water"
+        ]
+    },
+    "Wartortle": {
+        "bst": [
+            59,
+            63,
+            65,
+            80,
+            80,
+            58
+        ],
+        "types": [
+            "water"
+        ]
+    },
+    "Blastoise": {
+        "bst": [
+            79,
+            83,
+            85,
+            100,
+            105,
+            78
+        ],
+        "types": [
+            "water", "fighting"
+        ]
+    },
+    "Bulbasaur": {
+        "bst": [
+            45,
+            49,
+            65,
+            49,
+            65,
+            45
+        ],
+        "types": [
+            "grass", "poison"
+        ]
+    },
+    "Ivysaur": {
+        "bst": [
+            60,
+            62,
+            80,
+            63,
+            80,
+            60
+        ],
+        "types": [
+            "grass", "poison"
+        ]
+    },
+    "Venusaur": {
+        "bst": [
+            80,
+            82,
+            100,
+            83,
+            100,
+            80
+        ],
+        "types": [
+            "grass", "poison"
+        ]
+    }
+}

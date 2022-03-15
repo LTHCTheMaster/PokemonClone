@@ -58,5 +58,5 @@ addAllImmunities()
 def displayTypes() -> str:
     return '\n'.join([str(i) for i in pokeTypes])
 
-print(displayTypes())
+#print(displayTypes())
 print("[INIT]: Pokemon Types Initialization Ended")
