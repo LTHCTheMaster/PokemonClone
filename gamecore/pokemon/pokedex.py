@@ -6,7 +6,7 @@ print("[INIT]: Load Pokedex")
 with open('data/pokedex.json', 'r') as pfile:
     pkmn = eval(pfile.read())
 
-pokedex = [dt.Pokemon(i, pkmn[i]["bst"], [td.pokeTypes[td.NAMES.index(j)] for j in pkmn[i]["types"]]) for i in pkmn]
+pokedex = [dt.Pokemon(i, pkmn[i]["bst"], [td.pokeTypes[td.NAMES.index(j)] for j in pkmn[i]["types"]], 'assets/' + i.lower() + '.png') for i in pkmn]
 
 def displayPkmn() -> str:
     return '\n'.join([str(i) for i in pokedex])

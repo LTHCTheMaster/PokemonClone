@@ -1,4 +1,6 @@
 from fractions import Fraction
+from pygame import image
+from pygame import Surface
 
 print("[INIT]: Define Some DataTypes")
 
@@ -48,7 +50,7 @@ class Move:
         self.accuracy = accuracy
 
 class Pokemon:
-    def __init__(self, name: str, bst: list[int], types: list[PokeType]):
+    def __init__(self, name: str, bst: list[int], types: list[PokeType], image_path: str):
         self.name = name
         self.bst = bst # 0: HP, 1: ATK, 2: SPATK, 3: DEF, 4: SPDEF, 5: SPEED
         self.type0 = types[0]
@@ -56,6 +58,10 @@ class Pokemon:
             self.type1 = types[1]
         else:
             self.type1 = "UNDEFINED"
+        self.__IMAGE = image.load(image_path).convert()
+    
+    def draw(self, surface: Surface, coords: tuple[int, int]):
+        surface.blit(self.__IMAGE, coords)
     
     def __str__(self) -> str:
         bst_parts = '\n\t\t'.join([str(i) for i in self.bst])
