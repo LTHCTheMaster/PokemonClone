@@ -16,8 +16,9 @@ class Player:
         self.rect = pygame.Rect(self.positions[0]*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),self.positions[1]*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
         screen.blit(self.image, self.rect)
     
-    def update_position(self, pos_moves: list[int]):
-        self.positions = [self.positions[0] + pos_moves[0], self.positions[1] + pos_moves[1]]
+    def update_position(self, pos_moves: tuple[int, int]):
+        self.positions[0] = pos_moves[0]
+        self.positions[1] = pos_moves[1]
 
 map_tile_image = {
     "G": pygame.transform.scale(pygame.image.load('assets/imgs/grass0.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),

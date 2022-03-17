@@ -10,12 +10,8 @@ def main():
 
     from game import Game
 
-    game = Game(screen) 
-
-    while game.gamestate == ConfigAndStates.GameState.RUNNING:
-        clock.tick(ConfigAndStates.FPS)
-        game.update()
-        pygame.display.flip()
+    game = Game(screen, clock)
+    game.loop()
     
     return
 
