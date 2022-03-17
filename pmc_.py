@@ -20,10 +20,13 @@ class Player:
         self.positions[0] = pos_moves[0]
         self.positions[1] = pos_moves[1]
 
-map_tile_image = {
+MAPS_TILES_IMAGES = {
     "G": pygame.transform.scale(pygame.image.load('assets/imgs/grass0.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
     "H": pygame.transform.scale(pygame.image.load('assets/imgs/grass1.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "W": pygame.transform.scale(pygame.image.load('assets/imgs/water.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
+    "W": pygame.transform.scale(pygame.image.load('assets/imgs/water.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "R": pygame.transform.scale(pygame.image.load('assets/imgs/road_cross.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "S": pygame.transform.scale(pygame.image.load('assets/imgs/road_line.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "T": pygame.transform.scale(pygame.image.load('assets/imgs/road_column.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
 }
 
 class Map:
@@ -41,7 +44,7 @@ class Map:
         for line in self.map:
             x_pos = 0
             for tile in line:
-                image = map_tile_image[tile]
+                image = MAPS_TILES_IMAGES[tile]
                 rect = pygame.Rect(x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
                 screen.blit(image, rect)
                 x_pos += 1

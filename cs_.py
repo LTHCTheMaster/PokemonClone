@@ -13,6 +13,11 @@ FPS = 50
 # Other
 SCALE = 32
 
+# Tiles
+MAP_TILES_COLLISION = ("W")
+MAP_TILES_GRASS = ("G", "H")
+MAP_TILES_ROAD = ("R", "S", "T")
+
 ###################################################""
 
 class GameState(Enum):

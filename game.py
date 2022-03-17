@@ -11,8 +11,10 @@ class EventsHandler:
         self.camera = camera
         self.objects = objects
         self.gamestate = gamestate
+        self.player_has_moved = False
     
     def handle_events(self) -> ConfigAndStates.GameState:
+        self.player_has_moved = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.gamestate = ConfigAndStates.GameState.ENDED
@@ -20,9 +22,12 @@ class EventsHandler:
                 if event.key == pygame.K_ESCAPE:
                     self.gamestate = ConfigAndStates.GameState.ENDED
                 else:
-                    self.handle_moveEvent(event)
+                    self.handle_playerActionsEvent(event)
         return self.gamestate
-    
+
+    def handle_playerActionsEvent(self, event: pygame.event.Event):
+        self.handle_moveEvent(event)
+
     def handle_moveEvent(self, event: pygame.event.Event):
         if event.key in (pygame.K_z, pygame.K_w):
             self.move_object(self.player, (0, -1))
@@ -39,9 +44,11 @@ class EventsHandler:
         map_size = self.map.get_size()
         if new_pos[0] < 0 or new_pos[0] > map_size[0] or new_pos[1] < 0 or new_pos[1] > map_size[1]:
             return
-        if self.map.get_at(new_pos) == "W":
+        if self.map.get_at(new_pos) in ConfigAndStates.MAP_TILES_COLLISION:
             return
         
+        self.player_has_moved = True
+
         object.update_position(new_pos)
 
 class Renderer:
