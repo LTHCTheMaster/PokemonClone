@@ -1,15 +1,12 @@
 import pygame
-from camera import Camera
-from map import Map
-from player import Player
-from gamestate import GameState
-import configuration
+from pmc_ import Player, Map, Camera
+import cs_ as ConfigAndStates
 
 class Game:
     def __init__(self, screen: pygame.Surface):
         self.screen: pygame.Surface = screen
         self.objects: list = []
-        self.gamestate = GameState.NONE
+        self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
         self.set_up()
@@ -21,10 +18,10 @@ class Game:
         player = Player(1, 1)
         self.player = player
 
-        self.gamestate = GameState.RUNNING
+        self.gamestate = ConfigAndStates.GameState.RUNNING
 
     def update(self):
-        self.screen.fill(configuration.BLACK)
+        self.screen.fill(ConfigAndStates.BLACK)
         self.handle_events()
         self.camera.determine_camera(self.map, self.player)
         cam_pos = self.camera.get_pos()
@@ -47,10 +44,10 @@ class Game:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.gamestate = GameState.ENDED
+                self.gamestate = ConfigAndStates.GameState.ENDED
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.gamestate = GameState.ENDED
+                    self.gamestate = ConfigAndStates.GameState.ENDED
                 elif event.key in (pygame.K_z, pygame.K_w):
                     self.move_object(self.player, [0, -1])
                 elif event.key == pygame.K_s:

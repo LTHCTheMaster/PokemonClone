@@ -1,18 +1,23 @@
-import pygame
-import configuration
-from gamestate import GameState
+def main():
+    import pygame
+    import cs_ as ConfigAndStates
 
-pygame.init()
-screen = pygame.display.set_mode(configuration.SCREEN_SIZE)
-pygame.display.set_caption('Pokemon Clone')
+    pygame.init()
+    screen = pygame.display.set_mode(ConfigAndStates.SCREEN_SIZE)
+    pygame.display.set_caption('Pokemon Clone')
 
-clock = pygame.time.Clock()
+    clock = pygame.time.Clock()
 
-from game import Game
+    from game import Game
 
-game = Game(screen) 
+    game = Game(screen) 
 
-while game.gamestate == GameState.RUNNING:
-    clock.tick(configuration.FPS)
-    game.update()
-    pygame.display.flip()
+    while game.gamestate == ConfigAndStates.GameState.RUNNING:
+        clock.tick(ConfigAndStates.FPS)
+        game.update()
+        pygame.display.flip()
+    
+    return
+
+if __name__ == "__main__":
+    main()
