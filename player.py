@@ -1,12 +1,12 @@
 import pygame
-import config
+import configuration
 
 class Player:
     def __init__(self, x_pos, y_pos):
         self.positions = [x_pos, y_pos]
         self.image = pygame.image.load('assets/imgs/player.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (config.SCALE, config.SCALE))
-        self.rect = pygame.Rect(self.positions[0]*config.SCALE,self.positions[1]*config.SCALE,config.SCALE,config.SCALE)
+        self.image = pygame.transform.scale(self.image, (configuration.SCALE, configuration.SCALE))
+        self.rect = pygame.Rect(self.positions[0]*configuration.SCALE,self.positions[1]*configuration.SCALE,configuration.SCALE,configuration.SCALE)
     
     def update(self):
         print("player updated")
@@ -16,4 +16,4 @@ class Player:
     
     def update_position(self, pos_x: int, pos_y: int):
         self.positions = [self.positions[0] + pos_x, self.positions[1] + pos_y]
-        self.rect = pygame.Rect(self.positions[0]*config.SCALE,self.positions[1]*config.SCALE,config.SCALE,config.SCALE)
+        self.rect = pygame.Rect(self.positions[0]*configuration.SCALE,self.positions[1]*configuration.SCALE,configuration.SCALE,configuration.SCALE)

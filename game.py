@@ -1,19 +1,19 @@
 import pygame
 from player import Player
-from game_state import GameState
-import config
+from gamestate import GameState
+import configuration
 
 map_tile_image = {
-    "G": pygame.transform.scale(pygame.image.load('assets/imgs/grass0.png').convert_alpha(), (config.SCALE, config.SCALE)),
-    "H": pygame.transform.scale(pygame.image.load('assets/imgs/grass1.png').convert_alpha(), (config.SCALE, config.SCALE)),
-    "W": pygame.transform.scale(pygame.image.load('assets/imgs/water.png').convert_alpha(), (config.SCALE, config.SCALE))
+    "G": pygame.transform.scale(pygame.image.load('assets/imgs/grass0.png').convert_alpha(), (configuration.SCALE, configuration.SCALE)),
+    "H": pygame.transform.scale(pygame.image.load('assets/imgs/grass1.png').convert_alpha(), (configuration.SCALE, configuration.SCALE)),
+    "W": pygame.transform.scale(pygame.image.load('assets/imgs/water.png').convert_alpha(), (configuration.SCALE, configuration.SCALE))
 }
 
 class Game:
     def __init__(self, screen: pygame.Surface):
         self.screen: pygame.Surface = screen
         self.objects: list = []
-        self.game_state = GameState.NONE
+        self.gamestate = GameState.NONE
         self.map = []
         self.set_up()
     
@@ -23,7 +23,7 @@ class Game:
 
         self.objects.append(self.player)
 
-        self.game_state = GameState.RUNNING
+        self.gamestate = GameState.RUNNING
         
         self.load_map("01")
     
@@ -36,7 +36,7 @@ class Game:
                 self.map.append(temp.copy())
 
     def update(self):
-        self.screen.fill(config.BLACK)
+        self.screen.fill(configuration.BLACK)
         self.handle_events()
         self.render_map()
         for object in self.objects:
@@ -48,7 +48,7 @@ class Game:
             x_pos = 0
             for tile in line:
                 image = map_tile_image[tile]
-                rect = pygame.Rect(x_pos*config.SCALE,y_pos*config.SCALE,config.SCALE,config.SCALE)
+                rect = pygame.Rect(x_pos*configuration.SCALE,y_pos*configuration.SCALE,configuration.SCALE,configuration.SCALE)
                 self.screen.blit(image, rect)
                 x_pos += 1
             y_pos += 1
@@ -56,10 +56,10 @@ class Game:
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.game_state = GameState.ENDED
+                self.gamestate = GameState.ENDED
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.game_state = GameState.ENDED
+                    self.gamestate = GameState.ENDED
                 elif event.key == pygame.K_z:
                     self.player.update_position(0, -1)
                 elif event.key == pygame.K_s:
