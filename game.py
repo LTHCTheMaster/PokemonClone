@@ -1,8 +1,9 @@
 import pygame
-from pmc_ import Player, Map, Camera
+from rc_pmc_ import Player, Map, Camera, RenderSucces
 import cs_ as ConfigAndStates
+from logger_ import Logger
 
-SUPPORTED_OBJECTS = list
+SUPPORTED_OBJECTS = list[Player | Map]
 
 class EventsHandler:
     def __init__(self, player: Player, map: Map, camera: Camera, objects: SUPPORTED_OBJECTS, gamestate: ConfigAndStates.GameState):
@@ -13,16 +14,19 @@ class EventsHandler:
         self.gamestate = gamestate
         self.player_has_moved = False
     
-    def handle_events(self) -> ConfigAndStates.GameState:
-        self.player_has_moved = False
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.gamestate = ConfigAndStates.GameState.ENDED
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+    def handle_events_on_map(self) -> ConfigAndStates.GameState:
+        try:
+            self.player_has_moved = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     self.gamestate = ConfigAndStates.GameState.ENDED
-                else:
-                    self.handle_playerActionsEvent(event)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.gamestate = ConfigAndStates.GameState.ENDED
+                    else:
+                        self.handle_playerActionsEvent(event)
+        except:
+            self.gamestate = ConfigAndStates.GameState.CRASHED
         return self.gamestate
 
     def handle_playerActionsEvent(self, event: pygame.event.Event):
@@ -52,29 +56,37 @@ class EventsHandler:
         object.update_position(new_pos)
 
 class Renderer:
-    def __init__(self, screen: pygame.Surface, player: Player, map: Map, camera: Camera, objects: SUPPORTED_OBJECTS):
+    def __init__(self, screen: pygame.Surface, player: Player, map: Map, camera: Camera, objects_map: SUPPORTED_OBJECTS, state = ConfigAndStates.GameState):
         self.screen = screen
         self.player = player
         self.map = map
         self.camera = camera
-        self.objects = objects
+        self.objects_map = objects_map
+        self.state = state
     
-    def render(self):
+    def render_on_map(self) -> ConfigAndStates.GameState:
         self.camera.determine_camera(self.map, self.player)
         cam_pos = self.camera.get_pos()
-        self.map.render(self.screen, cam_pos[0], cam_pos[1])
-        self.player.render(self.screen, cam_pos[0], cam_pos[1])
-        for object in self.objects:
-            object.render(self.screen)
+        for object in self.objects_map:
+            try:
+                if type(object.render(self.screen, cam_pos[0], cam_pos[1])) is RenderSucces:
+                    pass
+                else:
+                    self.state = ConfigAndStates.GameState.CRASHED
+            except:
+                self.state = ConfigAndStates.GameState.CRASHED
+        return self.state
 
 class Game:
-    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock):
+    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock, logger: Logger):
         self.screen: pygame.Surface = screen
-        self.objects: SUPPORTED_OBJECTS = []
+        self.objects_map: SUPPORTED_OBJECTS = []
         self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
         self.clock = clock
+        self.logger = logger
+        self.current_sys_state = ConfigAndStates.InstanceState.NONE
         self.set_up()
     
     def set_up(self):
@@ -84,18 +96,24 @@ class Game:
         player = Player(1, 1)
         self.player = player
 
-        self.renderer = Renderer(self.screen, self.player, self.map, self.camera, self.objects)
+        self.objects_map.extend([self.map, self.player])
+
         self.gamestate = ConfigAndStates.GameState.RUNNING
-        self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects, self.gamestate)
+        self.renderer = Renderer(self.screen, self.player, self.map, self.camera, self.objects_map, self.gamestate)
+        self.current_sys_state = ConfigAndStates.InstanceState.ON_MAP
+        self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects_map, self.gamestate)
 
     def update(self):
-        self.screen.fill(ConfigAndStates.BLACK)
-        self.gamestate = self.event_handler.handle_events()
-        self.renderer.render()
+        if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
+            self.gamestate = self.event_handler.handle_events_on_map()
+            if self.gamestate == ConfigAndStates.GameState.RUNNING:
+                self.gamestate = self.renderer.render_on_map()
         pygame.display.flip()
     
     def loop(self):
+        self.logger.log('[Game]: Require the start of the loop of the game')
         while self.gamestate == ConfigAndStates.GameState.RUNNING:
             self.clock.tick(ConfigAndStates.FPS)
             self.update()
+        self.logger.log('[Game]: Require the end of the game')
         return

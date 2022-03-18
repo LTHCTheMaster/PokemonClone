@@ -2,8 +2,27 @@ import pygame
 import cs_ as ConfigAndStates
 from math import ceil
 
-class Player:
+class RenderSucces(ConfigAndStates.ResultState):
+    def __init(self):
+        pass
+
+class RenderedComponent:
+    def __init__(self):
+        pass
+
+    def render(self, screen: pygame.Surface):
+        return RenderSucces()
+
+class RenderedComponent_OnMap(RenderedComponent):
+    def __init__(self):
+        super().__init__()
+    
+    def render(self, screen: pygame.Surface, x_axis: int, y_axis: int):
+        return RenderSucces()
+
+class Player(RenderedComponent_OnMap):
     def __init__(self, x_pos, y_pos):
+        super().__init__()
         self.positions = [x_pos, y_pos]
         self.image = pygame.image.load('assets/imgs/player/player.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
@@ -15,6 +34,7 @@ class Player:
     def render(self, screen: pygame.Surface, x_axis: int, y_axis: int):
         self.rect = pygame.Rect(self.positions[0]*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),self.positions[1]*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
         screen.blit(self.image, self.rect)
+        return RenderSucces()
     
     def update_position(self, pos_moves: tuple[int, int]):
         self.positions[0] = pos_moves[0]
@@ -29,8 +49,9 @@ MAPS_TILES_IMAGES = {
     "T": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/roads/road_column.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
 }
 
-class Map:
+class Map(RenderedComponent_OnMap):
     def __init__(self, path: str):
+        super().__init__()
         self.map: list[list[str]] = []
         with open('assets/maps/base/' + path + '.txt', 'r') as map_file:
             for line in map_file.readlines():
@@ -45,13 +66,14 @@ class Map:
             x_pos = 0
             for tile in line:
                 if "base" in tile:
-                    image = MAPS_TILES_IMAGES[tile.replace('base','')]
                     if x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) >= 0 and x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[0]:
                         if y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) >= 0 and y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[1]:
+                            image = MAPS_TILES_IMAGES[tile.replace('base','')]
                             rect = pygame.Rect(x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
                             screen.blit(image, rect)
                 x_pos += 1
             y_pos += 1
+        return RenderSucces()
     
     def get_at(self, pos_on: list[int]) -> str:
         return self.map[pos_on[1]][pos_on[0]]
