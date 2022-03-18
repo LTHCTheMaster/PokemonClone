@@ -5,7 +5,7 @@ from math import ceil
 class Player:
     def __init__(self, x_pos, y_pos):
         self.positions = [x_pos, y_pos]
-        self.image = pygame.image.load('assets/imgs/player.png').convert_alpha()
+        self.image = pygame.image.load('assets/imgs/player/player.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
         self.rect = pygame.Rect(self.positions[0]*ConfigAndStates.SCALE,self.positions[1]*ConfigAndStates.SCALE,ConfigAndStates.SCALE,ConfigAndStates.SCALE)
     
@@ -21,18 +21,18 @@ class Player:
         self.positions[1] = pos_moves[1]
 
 MAPS_TILES_IMAGES = {
-    "G": pygame.transform.scale(pygame.image.load('assets/imgs/grass0.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "H": pygame.transform.scale(pygame.image.load('assets/imgs/grass1.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "W": pygame.transform.scale(pygame.image.load('assets/imgs/water.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "R": pygame.transform.scale(pygame.image.load('assets/imgs/road_cross.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "S": pygame.transform.scale(pygame.image.load('assets/imgs/road_line.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
-    "T": pygame.transform.scale(pygame.image.load('assets/imgs/road_column.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
+    "G": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/grass/grass0.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "H": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/grass/grass1.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "W": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/water/water.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "R": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/roads/road_cross.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "S": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/roads/road_line.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE)),
+    "T": pygame.transform.scale(pygame.image.load('assets/imgs/tiles/roads/road_column.png').convert_alpha(), (ConfigAndStates.SCALE, ConfigAndStates.SCALE))
 }
 
 class Map:
     def __init__(self, path: str):
         self.map: list[list[str]] = []
-        with open('assets/maps/' + path + '.txt', 'r') as map_file:
+        with open('assets/maps/base/' + path + '.txt', 'r') as map_file:
             for line in map_file.readlines():
                 temp = []
                 for i in range(0, len(line) - 1):
