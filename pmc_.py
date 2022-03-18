@@ -36,7 +36,7 @@ class Map:
             for line in map_file.readlines():
                 temp = []
                 for i in range(0, len(line) - 1):
-                    temp.append(line[i])
+                    temp.append('base'+line[i])
                 self.map.append(temp.copy())
     
     def render(self, screen: pygame.Surface, x_axis: int, y_axis: int):
@@ -44,9 +44,12 @@ class Map:
         for line in self.map:
             x_pos = 0
             for tile in line:
-                image = MAPS_TILES_IMAGES[tile]
-                rect = pygame.Rect(x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
-                screen.blit(image, rect)
+                if "base" in tile:
+                    image = MAPS_TILES_IMAGES[tile.replace('base','')]
+                    if x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) >= 0 and x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[0]:
+                        if y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) >= 0 and y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[1]:
+                            rect = pygame.Rect(x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
+                            screen.blit(image, rect)
                 x_pos += 1
             y_pos += 1
     

@@ -14,9 +14,9 @@ FPS = 50
 SCALE = 32
 
 # Tiles
-MAP_TILES_COLLISION = ("W")
-MAP_TILES_GRASS = ("G", "H")
-MAP_TILES_ROAD = ("R", "S", "T")
+MAP_TILES_COLLISION = ("baseW")
+MAP_TILES_GRASS = ("baseG", "baseH")
+MAP_TILES_ROAD = ("baseR", "baseS", "baseT")
 
 ###################################################""
 
