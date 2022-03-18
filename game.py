@@ -87,10 +87,10 @@ class Game:
         self.clock = clock
         self.logger = logger
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
-        self.set_up()
+        self.set_up("01")
     
-    def set_up(self):
-        map_loaded = Map("01")
+    def set_up(self, map_name:str):
+        map_loaded = Map(map_name)
         self.map = map_loaded
 
         player = Player(1, 1)
@@ -103,7 +103,18 @@ class Game:
         self.current_sys_state = ConfigAndStates.InstanceState.ON_MAP
         self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects_map, self.gamestate)
 
+    def clean(self, screen: pygame.Surface, clock: pygame.time.Clock, logger: Logger):
+        self.screen: pygame.Surface = screen
+        self.objects_map: SUPPORTED_OBJECTS = []
+        self.gamestate = ConfigAndStates.GameState.NONE
+        self.map: Map = None
+        self.camera = Camera(0,0)
+        self.clock = clock
+        self.logger = logger
+        self.current_sys_state = ConfigAndStates.InstanceState.NONE
+
     def update(self):
+        self.screen.fill(ConfigAndStates.BLACK)
         if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
             self.gamestate = self.event_handler.handle_events_on_map()
             if self.gamestate == ConfigAndStates.GameState.RUNNING:

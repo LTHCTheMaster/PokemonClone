@@ -63,15 +63,15 @@ class Map(RenderedComponent_OnMap):
     def render(self, screen: pygame.Surface, x_axis: int, y_axis: int):
         y_pos = 0
         for line in self.map:
-            x_pos = 0
-            for tile in line:
-                if "base" in tile:
-                    if x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) >= 0 and x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[0]:
-                        if y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) >= 0 and y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[1]:
+            if y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) >= 0 and y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[1]:
+                x_pos = 0
+                for tile in line:
+                    if "base" in tile:
+                        if x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) >= 0 and x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE) < ConfigAndStates.SCREEN_SIZE[0]:
                             image = MAPS_TILES_IMAGES[tile.replace('base','')]
                             rect = pygame.Rect(x_pos*ConfigAndStates.SCALE - (x_axis * ConfigAndStates.SCALE),y_pos*ConfigAndStates.SCALE - (y_axis * ConfigAndStates.SCALE),ConfigAndStates.SCALE,ConfigAndStates.SCALE)
                             screen.blit(image, rect)
-                x_pos += 1
+                    x_pos += 1
             y_pos += 1
         return RenderSucces()
     
