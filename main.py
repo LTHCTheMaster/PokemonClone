@@ -1,4 +1,6 @@
-def main():
+from asyncio import run
+
+async def main():
     import pygame
     import cs_ as ConfigAndStates
 
@@ -17,16 +19,18 @@ def main():
 
     game = Game(screen, clock, logger)
     logger.log('[INIT]: Game Instance Initialized')
-    game.loop()
+    await game.start()
     
     if game.gamestate == ConfigAndStates.GameState.CRASHED:
         logger.log('[CRASH]: Game has Crashed')
+        logger.close()
         raise Exception("Game has Crashed")
 
     logger.log('[Game]: Game successfully ended')
+    logger.close()
     return
 
-def debug():
+async def debug():
     import pygame
     import cs_ as ConfigAndStates
 
@@ -47,14 +51,16 @@ def debug():
     game.clean(screen, clock, logger)
     game.set_up("perf_test_map")
     logger.log('[INIT]: Game Instance Initialized')
-    game.loop()
+    await game.start()
     
     if game.gamestate == ConfigAndStates.GameState.CRASHED:
         logger.log('[CRASH]: Game has Crashed')
+        logger.close()
         raise Exception("Game has Crashed")
 
     logger.log('[Game]: Game successfully ended')
+    logger.close()
     return
 
 if __name__ == "__main__":
-    main()
+    run(main())

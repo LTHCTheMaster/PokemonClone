@@ -19,6 +19,7 @@ class Logger:
     
     def close(self):
         self.log_file.close()
+        del self
     
     def log(self, log_line: str):
         self.log_file.write(log_line + '\n')

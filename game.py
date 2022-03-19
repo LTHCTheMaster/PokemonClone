@@ -2,6 +2,7 @@ import pygame
 from rc_pmc_ import Player, Map, Camera, RenderSucces
 import cs_ as ConfigAndStates
 from logger_ import Logger
+from asyncio import run, sleep
 
 SUPPORTED_OBJECTS = list[Player | Map]
 
@@ -13,6 +14,9 @@ class EventsHandler:
         self.objects = objects
         self.gamestate = gamestate
         self.player_has_moved = False
+        self.player_ismoving = False
+        self.player_dir = "up"
+        self.player_move_frame = 0
     
     def handle_events_on_map(self) -> ConfigAndStates.GameState:
         try:
@@ -25,6 +29,10 @@ class EventsHandler:
                         self.gamestate = ConfigAndStates.GameState.ENDED
                     else:
                         self.handle_playerActionsEvent(event)
+                elif event.type == pygame.KEYUP:
+                    self.player_ismoving = False
+                    self.player_move_frame = 0
+            self.execute_move()
         except:
             self.gamestate = ConfigAndStates.GameState.CRASHED
         return self.gamestate
@@ -34,13 +42,34 @@ class EventsHandler:
 
     def handle_moveEvent(self, event: pygame.event.Event):
         if event.key in (pygame.K_z, pygame.K_w):
-            self.move_object(self.player, (0, -1))
+            self.player_ismoving = True
+            self.player_dir = "up"
         elif event.key == pygame.K_s:
-            self.move_object(self.player, (0, 1))
+            self.player_ismoving = True
+            self.player_dir = "down"
         elif event.key in (pygame.K_q, pygame.K_a):
-            self.move_object(self.player, (-1, 0))
+            self.player_ismoving = True
+            self.player_dir = "left"
         elif event.key == pygame.K_d:
-            self.move_object(self.player, (1, 0))
+            self.player_ismoving = True
+            self.player_dir = "right"
+
+    def execute_move(self):
+        if self.player_ismoving:
+            if self.player_move_frame == 0:
+                self.player.change_state("animated")
+                self.player.rotate(self.player_dir)
+                if self.player_dir == "up":
+                    self.move_object(self.player, (0, -1))
+                elif self.player_dir == "down":
+                    self.move_object(self.player, (0, 1))
+                elif self.player_dir == "left":
+                    self.move_object(self.player, (-1, 0))
+                elif self.player_dir == "right":
+                    self.move_object(self.player, (1, 0))
+            self.player_move_frame = (self.player_move_frame + 1) % 3
+        else:
+            self.player.change_state("fixed")
 
     def move_object(self, object: Player, pos_moves: tuple[int, int]):
         new_pos = (object.positions[0] + pos_moves[0], object.positions[1] + pos_moves[1])
@@ -113,18 +142,23 @@ class Game:
         self.logger = logger
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
 
-    def update(self):
-        self.screen.fill(ConfigAndStates.BLACK)
+    async def start(self):
+        while self.gamestate == ConfigAndStates.GameState.RUNNING:
+            await self.update_loop()
+            if self.gamestate == ConfigAndStates.GameState.RUNNING:
+                await self.render_loop()
+        return
+
+    async def update_loop(self):
+        await sleep(1/ConfigAndStates.FTPS)
         if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
             self.gamestate = self.event_handler.handle_events_on_map()
-            if self.gamestate == ConfigAndStates.GameState.RUNNING:
-                self.gamestate = self.renderer.render_on_map()
-        pygame.display.flip()
+        return
     
-    def loop(self):
-        self.logger.log('[Game]: Require the start of the loop of the game')
-        while self.gamestate == ConfigAndStates.GameState.RUNNING:
-            self.clock.tick(ConfigAndStates.FPS)
-            self.update()
-        self.logger.log('[Game]: Require the end of the game')
+    async def render_loop(self):
+        await sleep(1/ConfigAndStates.FTPS)
+        self.screen.fill(ConfigAndStates.BLACK)
+        if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
+            self.gamestate = self.renderer.render_on_map()
+        pygame.display.flip()
         return
