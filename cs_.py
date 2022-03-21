@@ -2,19 +2,17 @@ from enum import Enum
 
 # Colors
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+LIGHT_GREY = (225, 225, 225)
 
 # Window Size
 SCREEN_SIZE = (640,480)
 
 # FTPS
-FTPS = 112
+FTPS = 60
 
 # Other
 SCALE = 32
 SCALE_GROUP = (SCALE, SCALE)
-LOGS_PATH = 'logs/'
-LOGS_EXT = '.log'
 MAPS_PATH = 'assets/maps/'
 MAPS_EXT = '.txt'
 
@@ -31,11 +29,6 @@ class GameState(Enum):
     RUNNING = 1,
     ENDED = 2,
     CRASHED = 3
-
-class LogState(Enum):
-    NONE = 0,
-    SUCCES = 1,
-    FAILURE = 2
 
 class InstanceState(Enum):
     NONE = 0,

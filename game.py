@@ -1,13 +1,12 @@
 import pygame
 from rc_pmc_ import Player, Map, Camera, RenderSucces
 import cs_ as ConfigAndStates
-from logger_ import Logger
-from asyncio import run, sleep
+from random import random
 
 SUPPORTED_OBJECTS = list[Player | Map]
 
 class EventsHandler:
-    def __init__(self, player: Player, map: Map, camera: Camera, objects: SUPPORTED_OBJECTS, gamestate: ConfigAndStates.GameState):
+    def __init__(self, player: Player, map: Map, camera: Camera, objects: SUPPORTED_OBJECTS, gamestate: ConfigAndStates.GameState, game):
         self.player = player
         self.map = map
         self.camera = camera
@@ -17,6 +16,7 @@ class EventsHandler:
         self.player_ismoving = False
         self.player_dir = "up"
         self.player_move_frame = 0
+        self.game = game
     
     def handle_events_on_map(self) -> ConfigAndStates.GameState:
         try:
@@ -33,6 +33,7 @@ class EventsHandler:
                     self.player_ismoving = False
                     self.player_move_frame = 0
             self.execute_move()
+            self.can_wild_battle()
         except:
             self.gamestate = ConfigAndStates.GameState.CRASHED
         return self.gamestate
@@ -84,6 +85,25 @@ class EventsHandler:
 
         object.update_position(new_pos)
 
+    def can_wild_battle(self):
+        if self.player_has_moved:
+            if self.map.get_layer_at(self.player.positions) in ConfigAndStates.MAP_TILES_WILD_ENCOUNTER:
+                if random() <= 0.1:
+                    self.game.current_sys_state = ConfigAndStates.InstanceState.IN_WILD_BATTLE
+                    self.player_has_moved = False
+
+    def handle_events_in_wild_battle(self) -> ConfigAndStates.GameState:
+        try:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.gamestate = ConfigAndStates.GameState.ENDED
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.gamestate = ConfigAndStates.GameState.ENDED
+        except:
+            self.gamestate = ConfigAndStates.GameState.CRASHED
+        return self.gamestate
+
 class Renderer:
     def __init__(self, screen: pygame.Surface, player: Player, map: Map, camera: Camera, objects_map: SUPPORTED_OBJECTS, state = ConfigAndStates.GameState):
         self.screen = screen
@@ -107,14 +127,13 @@ class Renderer:
         return self.state
 
 class Game:
-    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock, logger: Logger):
+    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock):
         self.screen: pygame.Surface = screen
         self.objects_map: SUPPORTED_OBJECTS = []
         self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
         self.clock = clock
-        self.logger = logger
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
         self.set_up("01")
     
@@ -130,35 +149,37 @@ class Game:
         self.gamestate = ConfigAndStates.GameState.RUNNING
         self.renderer = Renderer(self.screen, self.player, self.map, self.camera, self.objects_map, self.gamestate)
         self.current_sys_state = ConfigAndStates.InstanceState.ON_MAP
-        self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects_map, self.gamestate)
+        self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects_map, self.gamestate, self)
 
-    def clean(self, screen: pygame.Surface, clock: pygame.time.Clock, logger: Logger):
+    def clean(self, screen: pygame.Surface, clock: pygame.time.Clock):
         self.screen: pygame.Surface = screen
         self.objects_map: SUPPORTED_OBJECTS = []
         self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
         self.clock = clock
-        self.logger = logger
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
 
-    async def start(self):
+    def start(self):
         while self.gamestate == ConfigAndStates.GameState.RUNNING:
-            await self.update_loop()
+            self.clock.tick(ConfigAndStates.FTPS)
+            self.update_loop()
             if self.gamestate == ConfigAndStates.GameState.RUNNING:
-                await self.render_loop()
+                self.render_loop()
         return
 
-    async def update_loop(self):
-        await sleep(1/ConfigAndStates.FTPS)
+    def update_loop(self):
         if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
             self.gamestate = self.event_handler.handle_events_on_map()
+        if self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
+            self.gamestate = self.event_handler.handle_events_in_wild_battle()
         return
     
-    async def render_loop(self):
-        await sleep(1/ConfigAndStates.FTPS)
-        self.screen.fill(ConfigAndStates.BLACK)
+    def render_loop(self):
         if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
+            self.screen.fill(ConfigAndStates.BLACK)
             self.gamestate = self.renderer.render_on_map()
+        if self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
+            self.screen.fill(ConfigAndStates.LIGHT_GREY)
         pygame.display.flip()
         return

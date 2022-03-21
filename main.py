@@ -1,6 +1,4 @@
-from asyncio import run
-
-async def main():
+def main():
     import pygame
     import cs_ as ConfigAndStates
 
@@ -11,26 +9,16 @@ async def main():
     clock = pygame.time.Clock()
 
     from game import Game
-    from logger_ import Logger
 
-    logger = Logger()
-    if logger.state == ConfigAndStates.LogState.FAILURE:
-        raise Exception("Failure on the logger")
-
-    game = Game(screen, clock, logger)
-    logger.log('[INIT]: Game Instance Initialized')
-    await game.start()
+    game = Game(screen, clock)
+    game.start()
     
     if game.gamestate == ConfigAndStates.GameState.CRASHED:
-        logger.log('[CRASH]: Game has Crashed')
-        logger.close()
         raise Exception("Game has Crashed")
 
-    logger.log('[Game]: Game successfully ended')
-    logger.close()
     return
 
-async def debug():
+def debug():
     import pygame
     import cs_ as ConfigAndStates
 
@@ -41,26 +29,16 @@ async def debug():
     clock = pygame.time.Clock()
 
     from game import Game
-    from logger_ import Logger
 
-    logger = Logger()
-    if logger.state == ConfigAndStates.LogState.FAILURE:
-        raise Exception("Failure on the logger")
-
-    game = Game(screen, clock, logger)
-    game.clean(screen, clock, logger)
+    game = Game(screen, clock)
+    game.clean(screen, clock)
     game.set_up("perf_test_map")
-    logger.log('[INIT]: Game Instance Initialized')
-    await game.start()
+    game.start()
     
     if game.gamestate == ConfigAndStates.GameState.CRASHED:
-        logger.log('[CRASH]: Game has Crashed')
-        logger.close()
         raise Exception("Game has Crashed")
 
-    logger.log('[Game]: Game successfully ended')
-    logger.close()
     return
 
 if __name__ == "__main__":
-    run(main())
+    main()

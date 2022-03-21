@@ -165,6 +165,9 @@ class Map(RenderedComponent_OnMap):
     def get_at(self, pos_on: list[int]) -> str:
         return self.map[pos_on[1]][pos_on[0]]
     
+    def get_layer_at(self, pos_on: list[int]) -> str:
+        return self.layer[pos_on[1]][pos_on[0]]
+
     def get_size(self) -> tuple[int, int]:
         return (len(self.map[0]) - 1, len(self.map) - 1)
 
