@@ -31,6 +31,7 @@ class GameState(Enum):
     CRASHED = 3
 
 class InstanceState(Enum):
+    MENU = -1,
     NONE = 0,
     ON_MAP = 1,
     IN_WILD_BATTLE = 2

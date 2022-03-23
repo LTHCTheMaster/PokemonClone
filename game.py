@@ -1,5 +1,5 @@
 import pygame
-from rc_pmc_ import Player, Map, Camera, RenderSucces
+from rc_pmc_ import Player, Map, Camera, RenderSucces, RenderedComponent
 import cs_ as ConfigAndStates
 from random import random
 
@@ -127,14 +127,16 @@ class Renderer:
         return self.state
 
 class Game:
-    def __init__(self, screen: pygame.Surface, clock: pygame.time.Clock):
+    def __init__(self, screen: pygame.Surface, CLOCK: pygame.time.Clock):
         self.screen: pygame.Surface = screen
         self.objects_map: SUPPORTED_OBJECTS = []
         self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
-        self.clock = clock
+        self.CLOCK = CLOCK
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
+        self.menu = Menu(self)
+        self.menu.set_up()
         self.set_up("01")
     
     def set_up(self, map_name:str):
@@ -148,38 +150,77 @@ class Game:
 
         self.gamestate = ConfigAndStates.GameState.RUNNING
         self.renderer = Renderer(self.screen, self.player, self.map, self.camera, self.objects_map, self.gamestate)
-        self.current_sys_state = ConfigAndStates.InstanceState.ON_MAP
+        self.current_sys_state = ConfigAndStates.InstanceState.MENU
         self.event_handler = EventsHandler(self.player, self.map, self.camera, self.objects_map, self.gamestate, self)
 
-    def clean(self, screen: pygame.Surface, clock: pygame.time.Clock):
+    def clean(self, screen: pygame.Surface, CLOCK: pygame.time.Clock):
         self.screen: pygame.Surface = screen
         self.objects_map: SUPPORTED_OBJECTS = []
         self.gamestate = ConfigAndStates.GameState.NONE
         self.map: Map = None
         self.camera = Camera(0,0)
-        self.clock = clock
+        self.CLOCK = CLOCK
         self.current_sys_state = ConfigAndStates.InstanceState.NONE
 
     def start(self):
         while self.gamestate == ConfigAndStates.GameState.RUNNING:
-            self.clock.tick(ConfigAndStates.FTPS)
+            self.CLOCK.tick(ConfigAndStates.FTPS)
             self.update_loop()
             if self.gamestate == ConfigAndStates.GameState.RUNNING:
                 self.render_loop()
         return
 
     def update_loop(self):
-        if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
+        if self.current_sys_state == ConfigAndStates.InstanceState.MENU:
+            self.gamestate = self.menu.update()
+        elif self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
             self.gamestate = self.event_handler.handle_events_on_map()
-        if self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
+        elif self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
             self.gamestate = self.event_handler.handle_events_in_wild_battle()
         return
     
     def render_loop(self):
-        if self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
+        if self.current_sys_state == ConfigAndStates.InstanceState.MENU:
+            self.screen.fill(ConfigAndStates.LIGHT_GREY)
+            self.menu.render(self.screen)
+        elif self.current_sys_state == ConfigAndStates.InstanceState.ON_MAP:
             self.screen.fill(ConfigAndStates.BLACK)
             self.gamestate = self.renderer.render_on_map()
-        if self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
+        elif self.current_sys_state == ConfigAndStates.InstanceState.IN_WILD_BATTLE:
             self.screen.fill(ConfigAndStates.LIGHT_GREY)
         pygame.display.flip()
         return
+
+MENU_IMAGE = {
+    "press_enter": pygame.image.load('assets/imgs/menu/enter_press.png').convert_alpha()
+}
+
+class Menu(RenderedComponent):
+    def __init__(self, game: Game):
+        super().__init__()
+        self.game = game
+    
+    def set_up(self):
+        pass
+
+    def update(self) -> ConfigAndStates.GameState:
+        try:
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        return ConfigAndStates.GameState.ENDED
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            return ConfigAndStates.GameState.ENDED
+                        elif event.key == pygame.K_RETURN:
+                            self.game.current_sys_state = ConfigAndStates.InstanceState.ON_MAP
+            return ConfigAndStates.GameState.RUNNING
+        except:
+            return ConfigAndStates.GameState.CRASHED
+    
+    def render(self, screen: pygame.Surface):
+        try:
+            rect = pygame.Rect(180, 11, 300, 75)
+            screen.blit(MENU_IMAGE["press_enter"], rect)
+            return RenderSucces()
+        except:
+            return 

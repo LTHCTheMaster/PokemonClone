@@ -6,11 +6,11 @@ def main():
     screen = pygame.display.set_mode(ConfigAndStates.SCREEN_SIZE)
     pygame.display.set_caption('Pokemon Clone')
 
-    clock = pygame.time.Clock()
+    CLOCK = pygame.time.Clock()
 
     from game import Game
 
-    game = Game(screen, clock)
+    game = Game(screen, CLOCK)
     game.start()
     
     if game.gamestate == ConfigAndStates.GameState.CRASHED:
@@ -26,12 +26,12 @@ def debug():
     screen = pygame.display.set_mode(ConfigAndStates.SCREEN_SIZE)
     pygame.display.set_caption('Pokemon Clone')
 
-    clock = pygame.time.Clock()
+    CLOCK = pygame.time.Clock()
 
     from game import Game
 
-    game = Game(screen, clock)
-    game.clean(screen, clock)
+    game = Game(screen, CLOCK)
+    game.clean(screen, CLOCK)
     game.set_up("perf_test_map")
     game.start()
     

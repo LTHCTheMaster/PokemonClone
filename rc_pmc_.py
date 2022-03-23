@@ -68,10 +68,7 @@ class Player(RenderedComponent_OnMap):
         self.astate = 0
         self.image = PLAYER_ANIMATOR[self.dir][self.current]
         self.rect = pygame.Rect(self.positions[0]*ConfigAndStates.SCALE,self.positions[1]*ConfigAndStates.SCALE,ConfigAndStates.SCALE,ConfigAndStates.SCALE)
-    
-    def update(self):
-        print("player updated")
-    
+
     def rotate(self, new_dir):
         self.dir = new_dir
     
