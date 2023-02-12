@@ -125,6 +125,8 @@ class Map(RenderedComponent_OnMap):
         try:
             with open(ConfigAndStates.MAPS_PATH + 'layer/' + path + ConfigAndStates.MAPS_EXT, 'r') as map_layer_file:
                 for line in map_layer_file.readlines():
+                    if line == "":
+                        raise Exception()
                     temp = []
                     for i in range(0, len(line) - 1):
                         temp.append(line[i])
@@ -163,7 +165,10 @@ class Map(RenderedComponent_OnMap):
         return self.map[pos_on[1]][pos_on[0]]
     
     def get_layer_at(self, pos_on: list[int]) -> str:
-        return self.layer[pos_on[1]][pos_on[0]]
+        try:
+            return self.layer[pos_on[1]][pos_on[0]]
+        except:
+            return "delta-no-op"
 
     def get_size(self) -> tuple[int, int]:
         return (len(self.map[0]) - 1, len(self.map) - 1)
